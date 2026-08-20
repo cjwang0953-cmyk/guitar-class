@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第九週教學：分散和弦實務 (Arpeggios) 與順階和弦應用</title>
+    <style>
+        :root {
+            --bg-color: #f4efe6;
+            --fretboard-bg: #e6d7c3;
+            --fret-color: #5c4033;
+            --inlay-color: #8c7b70;
+            --root-color: #e63946;
+            --note-color: #1d3557;
+            --text-color: #2b2d42;
+        }
+
+        body {
+            font-family: Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            border-bottom: 2px solid var(--fret-color);
+            padding-bottom: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        select {
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .info-card {
+            background: #fdfbf7;
+            border-left: 5px solid var(--fret-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .fretboard-container {
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+        .fretboard {
+            display: grid;
+            grid-template-rows: repeat(6, 28px);
+            background: var(--fretboard-bg);
+            border: 2px solid var(--fret-color);
+            position: relative;
+            min-width: 800px;
+            margin-top: 20px;
+        }
+
+        .string {
+            display: grid;
+            grid-template-columns: 40px repeat(15, 1fr);
+            border-bottom: 1px solid var(--fret-color);
+            align-items: center;
+        }
+
+        .string:last-child {
+            border-bottom: none;
+        }
+
+        .fret {
+            border-right: 2px solid var(--fret-color);
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .fret.open-string {
+            border-right: 4px solid var(--fret-color);
+            background-color: #d8c3a5;
+        }
+
+        .note {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: var(--note-color);
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .note.root {
+            background-color: var(--root-color);
+        }
+
+        .fret-markers {
+            display: grid;
+            grid-template-columns: 40px repeat(15, 1fr);
+            margin-top: 5px;
+            text-align: center;
+            font-weight: bold;
+            color: #666;
+            min-width: 800px;
+        }
+
+        .lesson-section {
+            margin-top: 30px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>第九週教學：分散和弦實務 (Arpeggios) 與順階和弦應用</h1>
+
+    <!-- 控制區塊 -->
+    <div class="controls">
+        <div class="control-group">
+            <label for="root-select">根音 (Root):</label>
+            <select id="root-select" onchange="updateFretboard()">
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G" selected>G</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label for="chord-select">和弦種類 (Chord Type):</label>
+            <select id="chord-select" onchange="updateFretboard()">
+                <option value="maj7">Major 7th (大七和弦)</option>
+                <option value="m7">Minor 7th (小七和弦)</option>
+                <option value="7">Dominant 7th (屬七和弦)</option>
+                <option value="m7b5">Half-Diminished 7th (半減七和弦 / m7b5)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 資訊顯示卡片 -->
+    <div class="info-card">
+        <h3 id="chord-title" style="margin-top:0;">G Major 7th</h3>
+        <p><strong>組成音 (Notes):</strong> <span id="chord-notes">G B D F#</span></p>
+        <p><strong>音程公式 (Formula):</strong> <span id="chord-formula">1 3 5 7</span></p>
+        <p><strong>常見標記 (Symbol):</strong> <span id="chord-symbol">Gmaj7</span></p>
+    </div>
+
+    <!-- 吉他指板可視化 (顯示前 15 格) -->
+    <div class="fretboard-container">
+        <div class="fretboard" id="fretboard"></div>
+        <div class="fret-markers">
+            <div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
+            <div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div>
+            <div>12</div><div>13</div><div>14</div><div>15</div>
+        </div>
+    </div>
+
+    <!-- 教學內容區塊 -->
+    <div class="lesson-section">
+        <h2>第九週課程重點</h2>
+        <ul>
+            <li><strong>分散和弦實務 (Arpeggios)：</strong> 練習將和弦內的單音依序彈奏（非同時壓響），建立指板上精準的單音音程定位。</li>
+            <li><strong>順階和弦應用 (Diatonic Chords)：</strong>
+                <ul>
+                    <li><strong>Imaj7 / IVmaj7：</strong> 大七和弦 Arpeggio 走法[cite: 1]</li>
+                    <li><strong>iim7 / iiim7 / vim7：</strong> 小七和弦 Arpeggio 走法[cite: 1]</li>
+                    <li><strong>V7：</strong> 屬七和弦 Arpeggio 走法（具備強烈解決至 I 和弦的趨勢）[cite: 1]</li>
+                    <li><strong>vii°m7b5：</strong> 半減七和弦 Arpeggio 走法[cite: 1]</li>
+                </ul>
+            </li>
+            <li><strong>練習目標：</strong> 結合 Arpeggio 指型於自然音階與順階和弦進行中（如 ii - V - I 進行），達成靈活的全指板 Arpeggio 巡航。</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    const notesOrder = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    
+    // 標準調音 6 弦到 1 弦的開放音
+    const openStrings = ["E", "B", "G", "D", "A", "E"]; 
+
+    const chordDefs = {
+        "maj7": { name: "Major 7th", formula: "1 3 5 7", intervals: [0, 4, 7, 11] },
+        "m7": { name: "Minor 7th", formula: "1 b3 5 b7", intervals: [0, 3, 7, 10] },
+        "7": { name: "Dominant 7th", formula: "1 3 5 b7", intervals: [0, 4, 7, 10] },
+        "m7b5": { name: "Half-Diminished 7th", formula: "1 b3 b5 b7", intervals: [0, 3, 6, 10] }
+    };
+
+    function getNoteByOffset(baseNote, offset) {
+        let index = (notesOrder.indexOf(baseNote) + offset) % 12;
+        return notesOrder[index];
+    }
+
+    function updateFretboard() {
+        const root = document.getElementById("root-select").value;
+        const chordType = document.getElementById("chord-select").value;
+        const chordInfo = chordDefs[chordType];
+
+        // 計算和弦音
+        const rootIndex = notesOrder.indexOf(root);
+        const targetNotes = chordInfo.intervals.map(i => notesOrder[(rootIndex + i) % 12]);
+
+        // 更新 UI 卡片
+        document.getElementById("chord-title").innerText = `${root} ${chordInfo.name}`;
+        document.getElementById("chord-notes").innerText = targetNotes.join(" ");
+        document.getElementById("chord-formula").innerText = chordInfo.formula;
+        document.getElementById("chord-symbol").innerText = chordType === 'm7b5' ? `${root}ø / ${root}m7b5` : `${root}${chordType}`;
+
+        // 渲染指板
+        const board = document.getElementById("fretboard");
+        board.innerHTML = "";
+
+        openStrings.forEach(openNote => {
+            const stringRow = document.createElement("div");
+            stringRow.className = "string";
+
+            for (let fret = 0; fret <= 15; fret++) {
+                const fretDiv = document.createElement("div");
+                fretDiv.className = `fret ${fret === 0 ? 'open-string' : ''}`;
+                
+                const currentNote = getNoteByOffset(openNote, fret);
+                if (targetNotes.includes(currentNote)) {
+                    const noteCircle = document.createElement("div");
+                    noteCircle.className = `note ${currentNote === root ? 'root' : ''}`;
+                    noteCircle.innerText = currentNote;
+                    fretDiv.appendChild(noteCircle);
+                }
+                stringRow.appendChild(fretDiv);
+            }
+            board.appendChild(stringRow);
+        });
+    }
+
+    // 初始化載入
+    updateFretboard();
+</script>
+
+</body>
+</html>
