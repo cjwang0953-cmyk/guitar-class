@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>七和弦指板攻略 </title>
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --accent-color: #e53e3e;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+            --fretboard-bg: #fef08a;
+            --fret-color: #4a5568;
+            --root-color: #e53e3e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        select {
+            padding: 8px 14px;
+            font-size: 15px;
+            border-radius: 6px;
+            border: 2px solid var(--border-color);
+            background-color: white;
+            color: var(--text-color);
+            font-weight: 600;
+            outline: none;
+        }
+
+        .view-mode {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--primary-color);
+            background: white;
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .view-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .chords-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chord-card {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .chord-header {
+            text-align: center;
+            margin-bottom: 12px;
+            width: 100%;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 8px;
+        }
+
+        .chord-title {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .chord-subtitle {
+            font-size: 0.9em;
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .diagram-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .fret-number-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2c5282;
+            background: #ebf8ff;
+            border: 1px solid #bee3f8;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 24px;
+            white-space: nowrap;
+        }
+
+        .chord-diagram-container {
+            position: relative;
+            width: 180px;
+        }
+
+        .muted-strings {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            text-align: center;
+            font-weight: bold;
+            color: #e53e3e;
+            font-size: 16px;
+            height: 24px;
+        }
+
+        .vertical-fretboard {
+            display: grid;
+            grid-template-rows: repeat(4, 38px);
+            background: var(--fretboard-bg);
+            border: 2px solid var(--fret-color);
+            position: relative;
+        }
+
+        .v-fret {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            border-bottom: 2px solid var(--fret-color);
+            position: relative;
+        }
+
+        .v-fret:last-child {
+            border-bottom: none;
+        }
+
+        .v-string-line {
+            border-right: 1.5px solid #718096;
+            height: 100%;
+        }
+
+        .v-string-line:last-child {
+            border-right: none;
+        }
+
+        .fret-dots-layer {
+            position: absolute;
+            top: 24px;
+            left: 0;
+            width: 100%;
+            height: 152px;
+            pointer-events: none;
+        }
+
+        .dot-node {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #000000;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        .dot-node.root {
+            background-color: var(--root-color);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            border-radius: 0;
+            width: 26px;
+            height: 26px;
+        }
+
+        .degrees-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            text-align: center;
+            font-weight: bold;
+            color: #4a5568;
+            font-size: 12px;
+            margin-top: 8px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>七和弦指板攻略</h1>
+    </header>
+
+    <div class="controls">
+        <div class="control-group">
+            <label for="root-select">選擇根音 (Root Note):</label>
+            <select id="root-select" onchange="renderChords()">
+                <option value="C" selected>C (6弦:8格 | 5弦:3格 | 4弦:10格)</option>
+                <option value="C#">C# / Db (6弦:9格 | 5弦:4格 | 4弦:11格)</option>
+                <option value="D">D (6弦:10格 | 5弦:5格 | 4弦:12格)</option>
+                <option value="Eb">Eb (6弦:11格 | 5弦:6格 | 4弦:1格)</option>
+                <option value="E">E (6弦:12格 | 5弦:7格 | 4弦:2格)</option>
+                <option value="F">F (6弦:1格 | 5弦:8格 | 4弦:3格)</option>
+                <option value="F#">F# / Gb (6弦:2格 | 5弦:9格 | 4弦:4格)</option>
+                <option value="G">G (6弦:3格 | 5弦:10格 | 4弦:5格)</option>
+                <option value="Ab">Ab (6弦:4格 | 5弦:11格 | 4弦:6格)</option>
+                <option value="A">A (6弦:5格 | 5弦:12格 | 4弦:7格)</option>
+                <option value="Bb">Bb (6弦:6格 | 5弦:1格 | 4弦:8格)</option>
+                <option value="B">B (6弦:7格 | 5弦:2格 | 4弦:9格)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="type-select">七和弦類型 (7th Chord Type):</label>
+            <select id="type-select" onchange="renderChords()">
+                <option value="maj7">Major 7 (大七和弦)</option>
+                <option value="dom7">Dominant 7 (屬七和弦)</option>
+                <option value="m7">Minor 7 (小七和弦)</option>
+                <option value="dim7" selected>Diminished 7 (減七和弦)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="view-mode">
+        <button class="view-btn active" id="btn-finger" onclick="setViewMode('finger')">顯示左手指法 (Fingering)</button>
+        <button class="view-btn" id="btn-degree" onclick="setViewMode('degree')">顯示音程級數 (Degrees)</button>
+    </div>
+
+    <div class="chords-grid" id="chords-grid"></div>
+</div>
+
+<script>
+    let currentViewMode = 'finger';
+    const chromaticScale = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
+    const openStringPitches = { 6: 4, 5: 9, 4: 2 };
+
+    function getFretNumber(rootNote, stringNum) {
+        let rootIdx = chromaticScale.indexOf(rootNote);
+        if (rootIdx === -1) {
+            const altMap = { "Db": "C#", "Gb": "F#", "Ab": "G#", "Bb": "A#" };
+            rootIdx = chromaticScale.indexOf(altMap[rootNote] || "C");
+        }
+        let openPitch = openStringPitches[stringNum];
+        let fret = (rootIdx - openPitch + 12) % 12;
+        return fret === 0 ? 12 : fret;
+    }
+
+    const chordShapesData = {
+        "maj7": [
+            {
+                title: "6th String Root (6弦根音)",
+                rootString: 6,
+                muted: ["", "X", "", "", "", "X"],
+                dots: [
+                    { string: 6, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 4, fretRel: 2, finger: "3", degree: "Δ7" },
+                    { string: 3, fretRel: 2, finger: "4", degree: "Δ3" },
+                    { string: 2, fretRel: 1, finger: "2", degree: "p5" }
+                ],
+                bottomDegrees: ["R", "", "Δ7", "Δ3", "p5", ""]
+            },
+            {
+                title: "5th String Root (5弦根音)",
+                rootString: 5,
+                muted: ["X", "", "", "", "", ""],
+                dots: [
+                    { string: 5, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 4, fretRel: 3, finger: "3", degree: "p5" },
+                    { string: 3, fretRel: 2, finger: "2", degree: "Δ7" },
+                    { string: 2, fretRel: 3, finger: "4", degree: "Δ3" },
+                    { string: 1, fretRel: 1, finger: "1", degree: "p5" }
+                ],
+                bottomDegrees: ["", "R", "p5", "Δ7", "Δ3", "p5"]
+            },
+            {
+                title: "4th String Root (4弦根音)",
+                rootString: 4,
+                muted: ["X", "X", "", "", "", ""],
+                dots: [
+                    { string: 4, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 3, fretRel: 3, finger: "2", degree: "p5" },
+                    { string: 2, fretRel: 3, finger: "3", degree: "Δ7" },
+                    { string: 1, fretRel: 3, finger: "4", degree: "Δ3" }
+                ],
+                bottomDegrees: ["", "", "R", "p5", "Δ7", "Δ3"]
+            }
+        ],
+        "dom7": [
+            {
+                title: "6th String Root (6弦根音)",
+                rootString: 6,
+                muted: ["", "X", "", "", "", "X"],
+                dots: [
+                    { string: 6, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 4, fretRel: 1, finger: "2", degree: "b7" },
+                    { string: 3, fretRel: 2, finger: "4", degree: "Δ3" },
+                    { string: 2, fretRel: 1, finger: "3", degree: "p5" }
+                ],
+                bottomDegrees: ["R", "", "b7", "Δ3", "p5", ""]
+            },
+            {
+                title: "5th String Root (5弦根音)",
+                rootString: 5,
+                muted: ["X", "", "", "", "", ""],
+                dots: [
+                    { string: 5, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 4, fretRel: 3, finger: "3", degree: "p5" },
+                    { string: 3, fretRel: 1, finger: "1", degree: "b7" },
+                    { string: 2, fretRel: 3, finger: "4", degree: "Δ3" },
+                    { string: 1, fretRel: 1, finger: "1", degree: "p5" }
+                ],
+                bottomDegrees: ["", "R", "p5", "b7", "Δ3", "p5"]
+            },
+            {
+                title: "4th String Root (4弦根音)",
+                rootString: 4,
+                muted: ["X", "X", "", "", "", ""],
+                dots: [
+                    { string: 4, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 3, fretRel: 3, finger: "3", degree: "p5" },
+                    { string: 2, fretRel: 2, finger: "2", degree: "b7" },
+                    { string: 1, fretRel: 3, finger: "4", degree: "Δ3" }
+                ],
+                bottomDegrees: ["", "", "R", "p5", "b7", "Δ3"]
+            }
+        ],
+        "m7": [
+            {
+                title: "6th String Root (6弦根音)",
+                rootString: 6,
+                muted: ["", "X", "", "", "", "X"],
+                dots: [
+                    { string: 6, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 4, fretRel: 1, finger: "2", degree: "b7" },
+                    { string: 3, fretRel: 1, finger: "3", degree: "b3" },
+                    { string: 2, fretRel: 1, finger: "4", degree: "p5" }
+                ],
+                bottomDegrees: ["R", "", "b7", "b3", "p5", ""]
+            },
+            {
+                title: "5th String Root (5弦根音)",
+                rootString: 5,
+                muted: ["X", "", "", "", "", ""],
+                dots: [
+                    { string: 5, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 4, fretRel: 3, finger: "3", degree: "p5" },
+                    { string: 3, fretRel: 1, finger: "1", degree: "b7" },
+                    { string: 2, fretRel: 2, finger: "2", degree: "b3" },
+                    { string: 1, fretRel: 1, finger: "1", degree: "p5" }
+                ],
+                bottomDegrees: ["", "R", "p5", "b7", "b3", "p5"]
+            },
+            {
+                title: "4th String Root (4弦根音)",
+                rootString: 4,
+                muted: ["X", "X", "", "", "", ""],
+                dots: [
+                    { string: 4, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 3, fretRel: 3, finger: "4", degree: "p5" },
+                    { string: 2, fretRel: 2, finger: "2", degree: "b7" },
+                    { string: 1, fretRel: 2, finger: "3", degree: "b3" }
+                ],
+                bottomDegrees: ["", "", "R", "p5", "b7", "b3"]
+            }
+        ],
+        "dim7": [
+            {
+                title: "6th String Root (6弦根音)",
+                rootString: 6,
+                muted: ["", "X", "", "", "", "X"],
+                dots: [
+                    { string: 6, fretRel: 2, finger: "1", degree: "R", isRoot: true },
+                    { string: 4, fretRel: 3, finger: "3", degree: "b7" },
+                    { string: 3, fretRel: 3, finger: "4", degree: "b3" },
+                    { string: 2, fretRel: 1, finger: "2", degree: "b5" }
+                ],
+                bottomDegrees: ["R", "", "b7", "b3", "b5", ""]
+            },
+            {
+                title: "5th String Root (5弦根音)",
+                rootString: 5,
+                muted: ["X", "", "", "", "", "X"],
+                dots: [
+                    { string: 5, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 4, fretRel: 2, finger: "3", degree: "b5" },
+                    { string: 3, fretRel: 1, finger: "2", degree: "b7" },
+                    { string: 2, fretRel: 2, finger: "4", degree: "b3" }
+                ],
+                bottomDegrees: ["", "R", "b5", "b7", "b3", ""]
+            },
+            {
+                title: "4th String Root (4弦根音)",
+                rootString: 4,
+                muted: ["X", "X", "", "", "", ""],
+                dots: [
+                    { string: 4, fretRel: 1, finger: "1", degree: "R", isRoot: true },
+                    { string: 3, fretRel: 2, finger: "2", degree: "b5" },
+                    { string: 2, fretRel: 2, finger: "3", degree: "b7" },
+                    { string: 1, fretRel: 2, finger: "4", degree: "b3" }
+                ],
+                bottomDegrees: ["", "", "R", "b5", "b7", "b3"]
+            }
+        ]
+    };
+
+    function setViewMode(mode) {
+        currentViewMode = mode;
+        document.getElementById("btn-finger").classList.toggle("active", mode === 'finger');
+        document.getElementById("btn-degree").classList.toggle("active", mode === 'degree');
+        renderChords();
+    }
+
+    function renderChords() {
+        const type = document.getElementById("type-select").value;
+        const root = document.getElementById("root-select").value;
+        const grid = document.getElementById("chords-grid");
+        grid.innerHTML = "";
+
+        const shapes = chordShapesData[type] || chordShapesData["dim7"];
+
+        shapes.forEach(shape => {
+            const card = document.createElement("div");
+            card.className = "chord-card";
+
+            const rootFret = getFretNumber(root, shape.rootString);
+
+            const header = document.createElement("div");
+            header.className = "chord-header";
+            header.innerHTML = `
+                <div class="chord-title">${root} ${type.toUpperCase()}</div>
+                <div class="chord-subtitle">${shape.title} — 第 ${rootFret} 格</div>
+            `;
+            card.appendChild(header);
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "diagram-wrapper";
+
+            const fretLabel = document.createElement("div");
+            fretLabel.className = "fret-number-label";
+            fretLabel.innerText = `${rootFret} fr.`;
+            wrapper.appendChild(fretLabel);
+
+            const container = document.createElement("div");
+            container.className = "chord-diagram-container";
+
+            const mutedRow = document.createElement("div");
+            mutedRow.className = "muted-strings";
+            shape.muted.forEach(m => {
+                const div = document.createElement("div");
+                div.innerText = m;
+                mutedRow.appendChild(div);
+            });
+            container.appendChild(mutedRow);
+
+            const fretboard = document.createElement("div");
+            fretboard.className = "vertical-fretboard";
+            for (let f = 0; f < 4; f++) {
+                const vFret = document.createElement("div");
+                vFret.className = "v-fret";
+                for (let s = 0; s < 5; s++) {
+                    const vString = document.createElement("div");
+                    vString.className = "v-string-line";
+                    vFret.appendChild(vString);
+                }
+                fretboard.appendChild(vFret);
+            }
+            container.appendChild(fretboard);
+
+            const dotsLayer = document.createElement("div");
+            dotsLayer.className = "fret-dots-layer";
+
+            shape.dots.forEach(dot => {
+                const dotDiv = document.createElement("div");
+                dotDiv.className = `dot-node ${dot.isRoot ? 'root' : ''}`;
+                
+                const leftPercent = ((6 - dot.string) / 5) * 100;
+                const topPx = (dot.fretRel - 0.5) * 38;
+
+                dotDiv.style.left = `${leftPercent}%`;
+                dotDiv.style.top = `${topPx}px`;
+
+                dotDiv.innerText = (currentViewMode === 'finger') ? dot.finger : dot.degree;
+                dotsLayer.appendChild(dotDiv);
+            });
+            container.appendChild(dotsLayer);
+
+            const degRow = document.createElement("div");
+            degRow.className = "degrees-row";
+            shape.bottomDegrees.forEach(d => {
+                const div = document.createElement("div");
+                div.innerText = d;
+                degRow.appendChild(div);
+            });
+            container.appendChild(degRow);
+
+            wrapper.appendChild(container);
+            card.appendChild(wrapper);
+            grid.appendChild(card);
+        });
+    }
+
+    renderChords();
+</script>
+
+</body>
+</html>
