@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>第五週：五度圈與和弦應用</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* 隱藏原生 Radio 開關 */
+        input[type="radio"] {
+            display: none;
+        }
+
+        /* 投影片基礎容器 */
+        .slide-container {
+            width: 100%;
+            max-width: 960px;
+            min-height: 580px;
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 35px 40px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #333;
+        }
+
+        /* 純 CSS 控制 1~6 頁切換 */
+        #slide1:checked ~ .slide-1,
+        #slide2:checked ~ .slide-2,
+        #slide3:checked ~ .slide-3,
+        #slide4:checked ~ .slide-4,
+        #slide5:checked ~ .slide-5,
+        #slide6:checked ~ .slide-6 {
+            display: flex;
+        }
+
+        h1 { color: #4da6ff; font-size: 2.2rem; margin-bottom: 10px; }
+        h2 { color: #ffb84d; font-size: 1.5rem; margin-bottom: 15px; border-bottom: 2px solid #333; padding-bottom: 8px; }
+        p { font-size: 1rem; line-height: 1.6; color: #cccccc; -webkit-user-select: text; user-select: text; }
+        ul { margin-left: 20px; line-height: 1.7; font-size: 0.95rem; -webkit-user-select: text; user-select: text; }
+        li { margin-bottom: 8px; }
+        strong { color: #ffffff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; -webkit-user-select: text; user-select: text; }
+        th, td { border: 1px solid #333; padding: 8px 12px; text-align: left; }
+        th { background-color: #2a2a2a; color: #4da6ff; }
+        td { background-color: #181818; }
+        .highlight-box { background-color: #2a2a2a; border-left: 4px solid #4da6ff; padding: 12px 15px; border-radius: 4px; margin-top: 12px; font-size: 0.95rem; -webkit-user-select: text; user-select: text; }
+        
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+        .card { background: #252525; padding: 12px; border-radius: 8px; border: 1px solid #333; }
+        .card h3 { color: #4da6ff; font-size: 1rem; margin-bottom: 6px; }
+        .circle-diagram { display: flex; justify-content: center; align-items: center; margin: 15px 0; }
+        .circle-svg { max-width: 100%; height: auto; }
+        .note-seq { font-family: monospace; color: #ffb84d; font-size: 1rem; }
+        .footer-credit { text-align: right; color: #888; font-size: 0.85rem; margin-top: 10px; }
+
+        /* 換頁按鈕樣式 */
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            background-color: #4da6ff;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-btn:hover { background-color: #3385ff; }
+        .nav-btn:active { transform: scale(0.96); }
+
+        .nav-btn.disabled {
+            background-color: #333;
+            color: #666;
+            cursor: not-allowed;
+            pointer-events: none;
+            border: 1px solid #444;
+        }
+
+        .page-indicator {
+            color: #aaa;
+            font-size: 0.95rem;
+            font-weight: 500;
+            min-width: 90px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1~6 頁的 Radio 控制項 -->
+    <input type="radio" name="slides" id="slide1" checked>
+    <input type="radio" name="slides" id="slide2">
+    <input type="radio" name="slides" id="slide3">
+    <input type="radio" name="slides" id="slide4">
+    <input type="radio" name="slides" id="slide5">
+    <input type="radio" name="slides" id="slide6">
+
+    <!-- Slide 1 -->
+    <div class="slide-container slide-1">
+        <div>
+            <h1>第五週：五度圈與和弦應用</h1>
+            <p style="color: #888; margin-bottom: 25px;">理解變音記號與和弦進行 · 突破 2-5-1 音程架構</p>
+            <div class="highlight-box">
+                <p><strong>分類項目：</strong>五度圈</p>
+                <p><strong>教學核心：</strong>音符時值認知、♯、♭、♮ 還原記號應用</p>
+                <p><strong>實作重點：</strong>突破 2-5-1 音程，詩歌與流行樂常用和弦概念解說</p>
+            </div>
+        </div>
+        <div class="controls">
+            <span class="nav-btn disabled">上一頁</span>
+            <span class="page-indicator">Slide 1 / 6</span>
+            <label for="slide2" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide-container slide-2">
+        <div>
+            <h2>一、 音符時值認知與記號</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>1. 音符時值 (Duration)</h3>
+                    <p>• 全音符 (4拍)</p>
+                    <p>• 二分音符 (2拍)</p>
+                    <p>• 四分音符 (1拍)</p>
+                    <p>• 八分音符 (1/2拍)</p>
+                </div>
+                <div class="card">
+                    <h3>2. 變音記號與功能</h3>
+                    <p>• <b>♯ (升記號)</b>：升高半音</p>
+                    <p>• <b>♭ (降記號)</b>：降低半音</p>
+                    <p>• <b>♮ (還原記號)</b>：取消升降效果</p>
+                </div>
+                <div class="card">
+                    <h3>3. 等音異名 (Enharmonic)</h3>
+                    <p>在 12 平均律中，<b>C♯ = D♭</b>、<b>F♯ = G♭</b> 聲音頻率完全相同，但依調性樂理邏輯標記不同。</p>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <p><strong>記號提醒：</strong>還原記號 ♮ 通常用於小節內特定變音的解除，能保持樂譜的閱讀直覺性。</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide1" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 2 / 6</span>
+            <label for="slide3" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide-container slide-3">
+        <div>
+            <h2>二、 五度圈 (Circle of Fifths) 基礎概念</h2>
+            <ul>
+                <li><strong>什麼是五度圈：</strong>將 12 個半音依據「純五度（7個半音）」順時針排列成的圓環架構。</li>
+                <li><strong>順時針與逆時針：</strong>
+                    <ul>
+                        <li><b>順時針（往右）：</b>純五度關係，每多一步就增加一個 <b>♯ (升記號)</b>（C ➔ G ➔ D ➔ A ➔ E...）。</li>
+                        <li><b>逆時針（往左）：</b>純四度關係，每多一步就增加一個 <b>♭ (降記號)</b>（C ➔ F ➔ B♭ ➔ E♭...）。</li>
+                    </ul>
+                </li>
+                <li><strong>關係小調 (Relative Minor)：</strong>每個大調順時針內圈皆對應其關係小調（例如 C 大調對應 A 小調）。</li>
+            </ul>
+            <div class="highlight-box">
+                <p><strong>指板導航利器：</strong>五度圈能幫助吉他手迅速推算調號、轉調以及級數和弦配對！</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide2" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 3 / 6</span>
+            <label for="slide4" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide-container slide-4">
+        <div>
+            <h2>三、 五度圈探討 <span style="font-size: 1.1rem; color: #ffb84d;">(備用工具!)</span></h2>
+            
+            <p>
+                將各調的<strong>調性名稱</strong>，由聲音 <span style="color: #ffb84d; font-weight: bold;">C</span> 開始做順時針方向的<strong>完全五度上行 (P5)</strong> 排列，形成的循環圈即稱為「<strong>五度圈 (The Circle of Fifths)</strong>」！
+            </p>
+            <p>
+                而由逆時針方向觀察 (or 推導) 時可發現，其實本質為<strong>完全四度上行 (P4)</strong> 的排列組合，故也可稱為「<strong>四度圈</strong>」！
+            </p>
+
+            <!-- 五度圈圖示 -->
+            <div class="circle-diagram">
+                <svg class="circle-svg" width="380" height="380" viewBox="0 0 500 500">
+                    <circle cx="250" cy="250" r="180" fill="none" stroke="#444" stroke-width="2" stroke-dasharray="6 6"/>
+                    
+                    <path d="M 270 90 A 180 180 0 0 1 410 230" fill="none" stroke="#ff4d4d" stroke-width="2" marker-end="url(#arrow-red)"/>
+                    <text x="360" y="145" fill="#ff4d4d" font-size="14" font-weight="bold">P5 完全五度上行</text>
+
+                    <path d="M 230 90 A 180 180 0 0 0 90 230" fill="none" stroke="#4da6ff" stroke-width="2" marker-end="url(#arrow-blue)"/>
+                    <text x="100" y="145" fill="#4da6ff" font-size="14" font-weight="bold">P4 完全四度上行</text>
+
+                    <defs>
+                        <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff4d4d" />
+                        </marker>
+                        <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#4da6ff" />
+                        </marker>
+                    </defs>
+
+                    <!-- 各調節點 -->
+                    <g transform="translate(250, 60)">
+                        <rect x="-25" y="-18" width="50" height="30" fill="#2a2a2a" stroke="#ff4d4d" stroke-width="2" rx="4"/>
+                        <text x="0" y="3" fill="#fff" font-size="18" font-weight="bold" text-anchor="middle">C</text>
+                        <text x="35" y="-10" fill="#ff4d4d" font-size="12"><tspan fill="#aaa">升降記號: </tspan>0</text>
+                        <text x="-5" y="-25" fill="#ff4d4d" font-size="12" font-weight="bold">START!</text>
+                    </g>
+                    <g transform="translate(345, 85)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">G</text>
+                        <text x="25" y="0" fill="#aaa" font-size="12">1 ♯</text>
+                    </g>
+                    <g transform="translate(415, 155)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">D</text>
+                        <text x="25" y="0" fill="#aaa" font-size="12">2 ♯</text>
+                    </g>
+                    <g transform="translate(440, 250)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">A</text>
+                        <text x="25" y="0" fill="#aaa" font-size="12">3 ♯</text>
+                    </g>
+                    <g transform="translate(415, 345)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">E</text>
+                        <text x="25" y="0" fill="#aaa" font-size="12">4 ♯</text>
+                    </g>
+                    <g transform="translate(345, 415)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">B / C♭</text>
+                        <text x="40" y="0" fill="#aaa" font-size="12">5 ♯ / 7 ♭</text>
+                    </g>
+                    <g transform="translate(250, 440)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">F♯ / G♭</text>
+                        <text x="0" y="20" fill="#aaa" font-size="12" text-anchor="middle">6 ♯ / 6 ♭</text>
+                    </g>
+                    <g transform="translate(155, 415)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">C♯ / D♭</text>
+                        <text x="-40" y="0" fill="#aaa" font-size="12">7 ♯ / 5 ♭</text>
+                    </g>
+                    <g transform="translate(85, 345)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">A♭</text>
+                        <text x="-25" y="0" fill="#aaa" font-size="12">4 ♭</text>
+                    </g>
+                    <g transform="translate(60, 250)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">E♭</text>
+                        <text x="-25" y="0" fill="#aaa" font-size="12">3 ♭</text>
+                    </g>
+                    <g transform="translate(85, 155)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">B♭</text>
+                        <text x="-25" y="0" fill="#aaa" font-size="12">2 ♭</text>
+                    </g>
+                    <g transform="translate(155, 85)">
+                        <text x="0" y="0" fill="#4da6ff" font-size="18" font-weight="bold" text-anchor="middle">F</text>
+                        <text x="-25" y="0" fill="#aaa" font-size="12">1 ♭</text>
+                    </g>
+                </svg>
+            </div>
+
+            <p><strong>◎ 順時針 (完全五度) 推導：</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>調性 (關係小調)</th>
+                        <th>組成音</th>
+                        <th>升記號位置 (五線譜調號)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>C (Am)</strong></td>
+                        <td class="note-seq">1 - 2 - 3 ^ 4 - 5 - 6 - 7 ^ 1</td>
+                        <td>無升降記號</td>
+                    </tr>
+                    <tr>
+                        <td><strong>G (Em)</strong></td>
+                        <td class="note-seq">5 - 6 - 7 ^ 1 - 2 - 3 - ♯4 ^ 5</td>
+                        <td>1 個升記號 (♯F)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>D (Bm)</strong></td>
+                        <td class="note-seq">2 - 3 - ♯4 ^ 5 - 6 - 7 - ♯1 ^ 2</td>
+                        <td>2 個升記號 (♯F, ♯C)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>A (♯Fm)</strong></td>
+                        <td class="note-seq">6 - 7 - ♯1 ^ 2 - 3 - ♯4 - ♯5 ^ 6</td>
+                        <td>3 個升記號 (♯F, ♯C, ♯G)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>E (♯Cm)</strong></td>
+                        <td class="note-seq">3 - ♯4 - ♯5 ^ 6 - 7 - ♯1 - ♯2 ^ 3</td>
+                        <td>4 個升記號 (♯F, ♯C, ♯G, ♯D)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>B (♯Gm)</strong></td>
+                        <td class="note-seq">7 - ♯1 - ♯2 ^ 3 - ♯4 - ♯5 - ♯6 ^ 7</td>
+                        <td>5 個升記號 (♯F, ♯C, ♯G, ♯D, ♯A)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight-box">
+                <p><strong>規律總結：</strong></p>
+                <ul>
+                    <li>每往順時針推進一個調（完全五度），該大調音階中的第 <strong>7 音</strong> 就需要升半音（♯）。</li>
+                    <li>升記號出現的順序固定為：<strong>♯F → ♯C → ♯G → ♯D → ♯A → ♯E → ♯B</strong>（亦為五度順序）。</li>
+                </ul>
+            </div>
+            <div class="footer-credit">by. 新琴點撥</div>
+        </div>
+        <div class="controls">
+            <label for="slide3" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 4 / 6</span>
+            <label for="slide5" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide-container slide-5">
+        <div>
+            <h2>四、 突破 II - V - I (2-5-1) 和弦進行</h2>
+            <p><strong>核心概念：</strong> 2-5-1 是爵士、流行與詩歌中最常見且強烈的「緊張到解決」和弦進行。</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>調性</th>
+                        <th>II 級 (小七和弦 m7)</th>
+                        <th>V 級 (屬七和弦 7)</th>
+                        <th>I 級 (大七和弦 Maj7 / 三和弦)</th>
+                        <th>功能說明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>C 大調</b></td>
+                        <td><b>Dm7</b> (或 Dm)</td>
+                        <td><b>G7</b> (或 G)</td>
+                        <td><b>Cmaj7</b> (或 C)</td>
+                        <td>最標準的 2-5-1 解決路線。</td>
+                    </tr>
+                    <tr>
+                        <td><b>G 大調</b></td>
+                        <td><b>Am7</b> (或 Am)</td>
+                        <td><b>D7</b> (或 D)</td>
+                        <td><b>Gmaj7</b> (或 G)</td>
+                        <td>透過五度圈順時針推算出的常用進行。</td>
+                    </tr>
+                    <tr>
+                        <td><b>F 大調</b></td>
+                        <td><b>Gm7</b> (或 Gm)</td>
+                        <td><b>C7</b> (或 C)</td>
+                        <td><b>Fmaj7</b> (或 F)</td>
+                        <td>逆時針五度圈對應的和弦轉換。</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="highlight-box" style="margin-top: 10px;">
+                <p><strong>聲響感受：</strong> II 級帶出預告感，V 級建立強烈懸念（屬導音傾向），最後回到 I 級得到完美釋放。</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide4" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 5 / 6</span>
+            <label for="slide6" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide-container slide-6">
+        <div>
+            <h2>五、 詩歌與流行樂常用和弦進行</h2>
+            <ul>
+                <li><strong>經典 1-5-6-4 進行：</strong> <b style="color: #4da6ff;">C — G — Am — F</b>（萬用流行與詩歌和弦架構，極富抒情與流暢感）。</li>
+                <li><strong>副歌強烈進行 4-5-3-6：</strong> <b style="color: #ffb84d;">F — G — Em — Am</b>（常見於詩歌高潮副歌段落，情緒堆疊效果極佳）。</li>
+                <li><strong>實作訓練：</strong>
+                    <p>1. 在吉指板上記認 C 大調的 II(Dm) - V(G) - I(C) 根音位置。</p>
+                    <p>2. 搭配刷奏或分散指法，流暢切換 C — G — Am — F 進行。</p>
+                </li>
+            </ul>
+            <div class="highlight-box" style="margin-top: 15px;">
+                <p><strong>本週課後作業：</strong></p>
+                <p>1. 順時針背誦五度圈前 5 個大調（C, G, D, A, E）。</p>
+                <p>2. 練習以每拍一下的節奏，流暢切換 Dm ➔ G7 ➔ Cmaj7 和弦按法。</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide5" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 6 / 6</span>
+            <span class="nav-btn disabled">下一頁</span>
+        </div>
+    </div>
+
+</body>
+</html>
