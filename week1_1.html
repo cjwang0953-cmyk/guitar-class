@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>第一週：破冰與教學目標確定</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* 隱藏原生 Radio 控制項 */
+        input[type="radio"] {
+            display: none;
+        }
+
+        /* 投影片預設隱藏 */
+        .slide-container {
+            width: 100%;
+            max-width: 960px;
+            min-height: 580px;
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 35px 40px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #333;
+        }
+
+        /* 純 CSS 切換頁面 */
+        #slide1:checked ~ .slide-1,
+        #slide2:checked ~ .slide-2,
+        #slide3:checked ~ .slide-3,
+        #slide4:checked ~ .slide-4 {
+            display: flex;
+        }
+
+        h1 {
+            color: #4da6ff;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #ffb84d;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+        }
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #cccccc;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        ul {
+            margin-left: 20px;
+            line-height: 1.7;
+            font-size: 1rem;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        strong {
+            color: #ffffff;
+        }
+        .highlight-box {
+            background-color: #2a2a2a;
+            border-left: 4px solid #4da6ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 1rem;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .card {
+            background: #252525;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        .card h3 {
+            color: #4da6ff;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        /* 控制面板及按鈕切換 */
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            position: relative;
+            z-index: 9999;
+        }
+
+        .nav-btn {
+            background-color: #4da6ff; 
+            color: #fff; 
+            padding: 10px 22px; 
+            border-radius: 6px; 
+            font-size: 0.95rem; 
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-btn.disabled {
+            background-color: #444;
+            color: #888;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .page-indicator {
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 純 CSS 頁面切換控制點 -->
+    <input type="radio" name="slides" id="slide1" checked>
+    <input type="radio" name="slides" id="slide2">
+    <input type="radio" name="slides" id="slide3">
+    <input type="radio" name="slides" id="slide4">
+
+    <!-- Slide 1 -->
+    <div class="slide-container slide-1">
+        <div>
+            <h1>第一週：破冰相見歡與課程導覽</h1>
+            <p style="color: #888; margin-bottom: 25px;">開啟你的音樂之旅 · 釐清方向與目標設定</p>
+            <div class="highlight-box">
+                <p><strong>分類項目：</strong>破冰</p>
+                <p><strong>教學核心：</strong>了解學生程度與音樂背景</p>
+                <p><strong>實作重點：</strong>確定個別教學目標與專屬學習藍圖</p>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <span class="nav-btn disabled">上一頁</span>
+            <span class="page-indicator">Slide 1 / 4</span>
+            <label for="slide2" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide-container slide-2">
+        <div>
+            <h2>一、 破冰與學生程度了解</h2>
+            <p>為了為您量身打造最適合的教學節奏，我們將透過簡單的對談釐清：</p>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>1. 音樂背景調查</h3>
+                    <p>是否學過其他樂器？對樂理或識譜（簡譜/五線譜/TAB 譜）是否有基礎概念？</p>
+                </div>
+                <div class="card">
+                    <h3>2. 吉他經驗評估</h3>
+                    <p>是否接觸過吉他？能順暢按壓基本開放和弦（C, G, Am, Em）或進行單音彈奏嗎？</p>
+                </div>
+                <div class="card">
+                    <h3>3. 喜愛的音樂風格</h3>
+                    <p>平時偏好的樂風（流行、搖滾、民謠、爵士、金屬等）與喜愛的歌手或樂團。</p>
+                </div>
+                <div class="card">
+                    <h3>4. 練習時間規劃</h3>
+                    <p>評估每週可投入的練習時間，確保設定的目標能在合理負擔下達成。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <label for="slide1" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 2 / 4</span>
+            <label for="slide3" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide-container slide-3">
+        <div>
+            <h2>二、 確定個別教學目標</h2>
+            <p>每位學員的學習起點與期望不同，我們將共同確立階段性里程碑：</p>
+            <ul style="margin-top: 15px;">
+                <li><strong>短期目標（1~4 週）：</strong> 熟悉琴頸構造、基本持琴姿勢、流暢切換基礎和弦與基本節奏型態。</li>
+                <li><strong>中期目標（5~8 週）：</strong> 掌握音程與指板地圖推算、蜘蛛走法等手指獨立性訓練，獨立彈唱完整歌曲。</li>
+                <li><strong>長期目標（9~12 週）：</strong> 理解系統化樂理（大小音程、三和弦/七和弦應用），能不靠譜進行簡單編曲或伴奏設計。</li>
+                <li><strong>目標曲目設定：</strong> 選定 1~2 首個人最想學會的目標歌曲，作為整季課程的實作成果標的。</li>
+            </ul>
+        </div>
+
+        <div class="controls">
+            <label for="slide2" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 3 / 4</span>
+            <label for="slide4" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide-container slide-4">
+        <div>
+            <h2>三、 12 週課程總覽</h2>
+            <ul style="margin-top: 15px;">
+                <li><strong>W1~W3 樂理與基礎：</strong> 破冰評估 ➔ 音樂物理與半音階構造 ➔ 名詞定義與音階推算</li>
+                <li><strong>W4~W6 基本功與技巧：</strong> 拍速與節奏感訓練 ➔ 五度圈與音程實用 ➔ 手指獨立性與 Picking 訓練</li>
+                <li><strong>W7~W9 伴奏與應用：</strong> 多元風格伴奏指法 ➔ 分散和弦實用 ➔ 音程理論與表格推算</li>
+                <li><strong>W10~W12 高階指板與和弦：</strong> 調式系統應用 ➔ 三和弦 (Triad) 指板縱橫 ➔ 七和弦指板規律</li>
+            </ul>
+            <div class="highlight-box">
+                <p><strong>課後準備提醒：</strong> 請確保每次上課帶齊吉他、調音器、PICK，並下載好節拍器 App！</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <label for="slide3" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 4 / 4</span>
+            <span class="nav-btn disabled">下一頁</span>
+        </div>
+    </div>
+
+</body>
+</html>
