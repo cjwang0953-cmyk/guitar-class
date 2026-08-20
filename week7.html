@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>第七週：CAGED系統與吉他指板解密</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* 隱藏原生 Radio 開關 */
+        input[type="radio"] {
+            display: none;
+        }
+
+        /* 投影片基礎容器 */
+        .slide-container {
+            width: 100%;
+            max-width: 960px;
+            min-height: 580px;
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 35px 40px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #333;
+        }
+
+        /* 純 CSS 控制 1~5 頁切換 */
+        #slide1:checked ~ .slide-1,
+        #slide2:checked ~ .slide-2,
+        #slide3:checked ~ .slide-3,
+        #slide4:checked ~ .slide-4,
+        #slide5:checked ~ .slide-5 {
+            display: flex;
+        }
+
+        h1 { color: #4da6ff; font-size: 2.2rem; margin-bottom: 10px; }
+        h2 { color: #ffb84d; font-size: 1.5rem; margin-bottom: 15px; border-bottom: 2px solid #333; padding-bottom: 8px; }
+        p { font-size: 1rem; line-height: 1.6; color: #cccccc; -webkit-user-select: text; user-select: text; }
+        ul { margin-left: 20px; line-height: 1.7; font-size: 0.95rem; -webkit-user-select: text; user-select: text; }
+        li { margin-bottom: 8px; }
+        strong { color: #ffffff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; -webkit-user-select: text; user-select: text; }
+        th, td { border: 1px solid #333; padding: 8px 12px; text-align: left; }
+        th { background-color: #2a2a2a; color: #4da6ff; }
+        td { background-color: #181818; }
+        .highlight-box { background-color: #2a2a2a; border-left: 4px solid #4da6ff; padding: 12px 15px; border-radius: 4px; margin-top: 12px; font-size: 0.95rem; -webkit-user-select: text; user-select: text; }
+        
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 12px; }
+        .card { background: #252525; padding: 14px; border-radius: 8px; border: 1px solid #333; }
+        .card h3 { color: #4da6ff; font-size: 1.05rem; margin-bottom: 6px; }
+
+        /* 圖片容器樣式 */
+        .img-container {
+            text-align: center;
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .img-container img {
+            max-width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+            background-color: #ffffff;
+            padding: 6px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        /* 換頁按鈕樣式 */
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            background-color: #4da6ff;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-btn:hover { background-color: #3385ff; }
+        .nav-btn:active { transform: scale(0.96); }
+
+        .nav-btn.disabled {
+            background-color: #333;
+            color: #666;
+            cursor: not-allowed;
+            pointer-events: none;
+            border: 1px solid #444;
+        }
+
+        .page-indicator {
+            color: #aaa;
+            font-size: 0.95rem;
+            font-weight: 500;
+            min-width: 90px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1~5 頁的 Radio 控制項 -->
+    <input type="radio" name="slides" id="slide1" checked>
+    <input type="radio" name="slides" id="slide2">
+    <input type="radio" name="slides" id="slide3">
+    <input type="radio" name="slides" id="slide4">
+    <input type="radio" name="slides" id="slide5">
+
+    <!-- Slide 1: 課程大綱 -->
+    <div class="slide-container slide-1">
+        <div>
+            <h1>第七週：CAGED系統與吉他指板解密</h1>
+            <p style="color: #888; margin-bottom: 25px;">打破全指板迷思 · 整合和弦、音階與琶音的終極地圖</p>
+            <div class="highlight-box">
+                <p><strong>分類項目：</strong>指板架構與進階樂理</p>
+                <p><strong>教學核心：</strong>CAGED 5大把位系統、五聲音階與自然大調音階對應、和弦內音 (Chord Tones)</p>
+                <p><strong>實作重點：</strong>跨把位 C 和弦連接、五音階塊狀（Block）切換與即興應用</p>
+            </div>
+        </div>
+        <div class="controls">
+            <span class="nav-btn disabled">上一頁</span>
+            <span class="page-indicator">Slide 1 / 5</span>
+            <label for="slide2" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 2: CAGED 全景地圖 (已修復圖片連結) -->
+    <div class="slide-container slide-2">
+        <div>
+            <h2>一、 CAGED 系統全景指南 (Fretboard Guide)</h2>
+            <p>CAGED 系統將整把吉他指板分割為 5 個相互串連的開放和弦型態 (C-A-G-E-D)：</p>
+            
+            <div class="img-container">
+                <img src="CAGED_PentatonicScale.jpg" alt="CAGED Fretboard Guide CAGED_PentatonicScale.jpg">
+                <p style="font-size: 0.85em; color: #aaa; margin-top: 6px;">▲ 圖解：C-A-G-E-D 五大把位下，開放和弦、五聲音階、大調音階與琶音的垂直對應關係</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide1" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 2 / 5</span>
+            <label for="slide3" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 3: 圖表解析 -->
+    <div class="slide-container slide-3">
+        <div>
+            <h2>二、 CAGED 縱向層級解析</h2>
+            <p>圖表中每一個字母型態（Row）皆包含 4 個縱向對應的維度：</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>層級項目</th>
+                        <th>圖表欄位</th>
+                        <th>核心意義與應用</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>1. 母開放和弦 (Parent Open Chords)</b></td>
+                        <td>第 1 欄</td>
+                        <td>最原始的 C、A、G、E、D 開放和弦指型，決定根音 (Root) 的相對位置。</td>
+                    </tr>
+                    <tr>
+                        <td><b>2. C 音封閉和弦 (Shapes In C)</b></td>
+                        <td>第 2 欄</td>
+                        <td>利用封閉（Barre）將 5 個型態推移至全指板，彈出相同聲響的 C 大三和弦。</td>
+                    </tr>
+                    <tr>
+                        <td><b>3. 大調五聲音階 (Major Pentatonic)</b></td>
+                        <td>第 3 欄</td>
+                        <td>以該和弦框型為基礎，延伸出的 5 音框架（1-2-3-5-6），為即興 Solo 的骨幹。</td>
+                    </tr>
+                    <tr>
+                        <td><b>4. 自然大調音階 (Major Scales)</b></td>
+                        <td>第 4 欄</td>
+                        <td>加入 4 音與 7 音（1-2-3-4-5-6-7），補全完整大調音階（如 F 與 B）。</td>
+                    </tr>
+                    <tr>
+                        <td><b>5. 琶音與和弦內音 (Arpeggios)</b></td>
+                        <td>第 5 欄</td>
+                        <td>精確定位根音 (1)、三音 (3) 與五音 (5)，作為旋律解決點 (Target Notes)。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="controls">
+            <label for="slide2" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 3 / 5</span>
+            <label for="slide4" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 4: 5大把位轉移原理 -->
+    <div class="slide-container slide-4">
+        <div>
+            <h2>三、 CAGED 五大把位橫向串連原理</h2>
+            <p>吉他指板的根音位置決定了把位的銜接點，以 **C 大調 (C Major)** 為例：</p>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>1. C Shape & A Shape</h3>
+                    <p>• <b>C Shape：</b> 根音位於 5 弦 3 格與 2 弦 1 格。</p>
+                    <p>• <b>A Shape：</b> 接續於第 3 格，根音同樣位於 5 弦 3 格，按法轉換為 A 型封閉。</p>
+                </div>
+                <div class="card">
+                    <h3>2. G Shape & E Shape</h3>
+                    <p>• <b>G Shape：</b> 根音位於 6 弦 8 格與 1 弦 8 格。</p>
+                    <p>• <b>E Shape：</b> 橫跨第 8 格，根音同為 6 弦 8 格，為最常用的封閉和弦型態。</p>
+                </div>
+            </div>
+            <div class="highlight-box" style="margin-top: 12px;">
+                <p><strong>口訣與記憶心法：</strong></p>
+                <p>C ➔ A ➔ G ➔ E ➔ D ➔ C（12格後循環）。相鄰兩個把位必然共用相同的根音位置！</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide3" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 4 / 5</span>
+            <label for="slide5" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 5: 課堂實作與應用練習 -->
+    <div class="slide-container slide-5">
+        <div>
+            <h2>四、 課堂實作與指板導航練習</h2>
+            <ul>
+                <li><strong>練習 1：全指板 C 和弦巡航 (Chord Navigation)</strong><br>
+                    從低音區到高音區，依序彈奏：C Shape ➔ A Shape ➔ G Shape ➔ E Shape ➔ D Shape，並能在過程中精確喊出 5 弦與 6 弦上的根音位置。
+                </li>
+                <li style="margin-top: 12px;"><strong>練習 2：五聲音階把位銜接 (Pentatonic Connection)</strong><br>
+                    選定 C Major Pentatonic，在每一把位上下來回彈奏，並在切換至下一個把位時，觀察和弦骨架（Chord Tones）如何重疊。
+                </li>
+                <li style="margin-top: 12px;"><strong>練習 3：Target Note (和弦音解決) 練習</strong><br>
+                    播放 C Major 背景伴奏 (Backing Track)，隨意彈奏五聲音階，句尾精確落落在當把位的根音 (1) 或三音 (3) 上。
+                </li>
+            </ul>
+            <div class="highlight-box" style="margin-top: 15px;">
+                <p><strong>本週課後作業：</strong></p>
+                <p>1. 熟記圖表中 5 個把位的五聲音階形狀。</p>
+                <p>2. 嘗試用 G 大調 (G Major) 重新推導一次 CAGED 五個把位的位置。</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide4" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 5 / 5</span>
+            <span class="nav-btn disabled">下一頁</span>
+        </div>
+    </div>
+
+</body>
+</html>
