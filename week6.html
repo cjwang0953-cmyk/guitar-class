@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>第六週：基本手指與 Picking 訓練</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* 隱藏原生 Radio 開關 */
+        input[type="radio"] {
+            display: none;
+        }
+
+        /* 投影片基礎容器 */
+        .slide-container {
+            width: 100%;
+            max-width: 960px;
+            min-height: 580px;
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 35px 40px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #333;
+        }
+
+        /* 純 CSS 控制 1~6 頁切換 */
+        #slide1:checked ~ .slide-1,
+        #slide2:checked ~ .slide-2,
+        #slide3:checked ~ .slide-3,
+        #slide4:checked ~ .slide-4,
+        #slide5:checked ~ .slide-5,
+        #slide6:checked ~ .slide-6 {
+            display: flex;
+        }
+
+        h1 { color: #4da6ff; font-size: 2.2rem; margin-bottom: 10px; }
+        h2 { color: #ffb84d; font-size: 1.5rem; margin-bottom: 15px; border-bottom: 2px solid #333; padding-bottom: 8px; }
+        p { font-size: 1rem; line-height: 1.6; color: #cccccc; -webkit-user-select: text; user-select: text; }
+        ul { margin-left: 20px; line-height: 1.7; font-size: 0.95rem; -webkit-user-select: text; user-select: text; }
+        li { margin-bottom: 8px; }
+        strong { color: #ffffff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; -webkit-user-select: text; user-select: text; }
+        th, td { border: 1px solid #333; padding: 10px 14px; text-align: left; }
+        th { background-color: #2a2a2a; color: #4da6ff; }
+        td { background-color: #181818; }
+        .highlight-box { background-color: #2a2a2a; border-left: 4px solid #4da6ff; padding: 12px 15px; border-radius: 4px; margin-top: 15px; font-size: 0.95rem; -webkit-user-select: text; user-select: text; }
+        
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+        .card { background: #252525; padding: 12px; border-radius: 8px; border: 1px solid #333; }
+        .card h3 { color: #4da6ff; font-size: 1rem; margin-bottom: 6px; }
+
+        /* 圖片容器樣式 */
+        .full-image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #181818;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-top: 5px;
+        }
+        .full-image-container img {
+            max-width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+            border-radius: 6px;
+            background-color: #ffffff;
+            padding: 4px;
+        }
+        .image-caption { font-size: 0.9rem; color: #aaa; margin-bottom: 10px; }
+
+        /* 換頁按鈕樣式 */
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            background-color: #4da6ff;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-btn:hover { background-color: #3385ff; }
+        .nav-btn:active { transform: scale(0.96); }
+
+        .nav-btn.disabled {
+            background-color: #333;
+            color: #666;
+            cursor: not-allowed;
+            pointer-events: none;
+            border: 1px solid #444;
+        }
+
+        .page-indicator {
+            color: #aaa;
+            font-size: 0.95rem;
+            font-weight: 500;
+            min-width: 90px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1~6 頁的 Radio 控制項 -->
+    <input type="radio" name="slides" id="slide1" checked>
+    <input type="radio" name="slides" id="slide2">
+    <input type="radio" name="slides" id="slide3">
+    <input type="radio" name="slides" id="slide4">
+    <input type="radio" name="slides" id="slide5">
+    <input type="radio" name="slides" id="slide6">
+
+    <!-- Slide 1 -->
+    <div class="slide-container slide-1">
+        <div>
+            <h1>第六週：基本手指與 Picking 訓練</h1>
+            <p style="color: #888; margin-bottom: 25px;">建立左右手協調度 · 機構式爬格與按壓技巧</p>
+            <div class="highlight-box">
+                <p><strong>分類項目：</strong>基本手指與 Picking</p>
+                <p><strong>教學核心：</strong>練習原則：跟著節奏、不間斷、慢速增加</p>
+                <p><strong>實作重點：</strong>蜘蛛走法、交錯爬格、依序練習、無名指訓練、平移練習、跨格練習</p>
+            </div>
+        </div>
+        <div class="controls">
+            <span class="nav-btn disabled">上一頁</span>
+            <span class="page-indicator">Slide 1 / 6</span>
+            <label for="slide2" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide-container slide-2">
+        <div>
+            <h2>一、 Picking 與機能訓練三大原則</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>1. 跟著節奏 (On Beat)</h3>
+                    <p>• 開啟節拍器進行練習。</p>
+                    <p>• 每個音符落點必須精準對齊拍點。</p>
+                    <p>• 避免「彈得快但節奏忽快忽慢」。</p>
+                </div>
+                <div class="card">
+                    <h3>2. 保持不間斷 (Flow)</h3>
+                    <p>• 換弦與換手指時音訊不中斷。</p>
+                    <p>• 避免按錯音時停頓，保持拍子的流暢度。</p>
+                    <p>• 左手獨立性與右手的預先到位。</p>
+                </div>
+                <div class="card">
+                    <h3>3. 慢速增加 (Gradual)</h3>
+                    <p>• 從極慢速（如 BPM 60）開始。</p>
+                    <p>• 確定 100% 顆粒清晰、無雜音後，每次調升 3~5 BPM。</p>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <p><strong>心法提醒：</strong>「慢即是快」！機能訓練的核心在於建立肌肉記憶，而不是比拼當下的速度。</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide1" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 2 / 6</span>
+            <label for="slide3" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide-container slide-3">
+        <div>
+            <h2>二、 機能實作 (1)：蜘蛛走法與交錯爬格</h2>
+            <ul>
+                <li><strong>1. 蜘蛛走法 (Spider Walk)：</strong>
+                    <ul>
+                        <li><b>動作要領：</b>按壓下一個音時，前一個手指<b>儘量保持保留在琴弦上（保留指）</b>，直到必須移動時才抬起。</li>
+                        <li><b>目的：</b>鍛鍊左手四個手指的肌肉獨立伸展度，減少不必要的抬指幅度。</li>
+                    </ul>
+                </li>
+                <li style="margin-top: 15px;"><strong>2. 交錯爬格 (Permutation Picking)：</strong>
+                    <ul>
+                        <li>打破傳統 1-2-3-4 的順序，改用不同的組合進行撥弦與按壓：</li>
+                        <li>常見組合：<b>1 - 3 - 2 - 4</b>（食-無-中-小）或 <b>1 - 4 - 2 - 3</b>（食-小-中-無）。</li>
+                        <li><b>目的：</b>破除手指的慣性聯動，強制讓不靈活的手指獨立發力。</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="highlight-box">
+                <p><strong>右手配合：</strong>全程使用正反交錯撥弦（Alternate Picking：↓ ↑ ↓ ↑），不可連續同方向撥弦。</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide2" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 3 / 6</span>
+            <label for="slide4" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide-container slide-4">
+        <div>
+            <h2>三、 機能實作 (2)：依序、無名指與跨格訓練</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>練習項目</th>
+                        <th>練習方式說明</th>
+                        <th>訓練目標</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>3. 依序練習</b></td>
+                        <td>從 6 弦到 1 弦依序進行 1-2-3-4，抵達高音弦後逆向 4-3-2-1 返回低音弦。</td>
+                        <td>建立基準節奏感知與跨弦撥弦動態。</td>
+                    </tr>
+                    <tr>
+                        <td><b>4. 無名指訓練</b></td>
+                        <td>專門針對弱勢手指的組合練習，如 <b>2-3-4-3</b> 或 <b>1-3-4-3</b>，強調無名指與小指的獨立發力。</td>
+                        <td>消除無名指按弦時連帶牽動中指或小指的問題。</td>
+                    </tr>
+                    <tr>
+                        <td><b>5. 平移練習</b></td>
+                        <td>在單一弦上進行 1-2-3-4 ➔ 2-3-4-5 ➔ 3-4-5-6 向高把位平移，再反向推回。</td>
+                        <td>訓練手臂與大拇指在琴頸後方平滑移位的能力。</td>
+                    </tr>
+                    <tr>
+                        <td><b>6. 跨格練習</b></td>
+                        <td>進行隔格擴張練習，如 <b>1 - 3 - 4 - 5</b> 或 <b>1 - 2 - 4 - 5</b>（跨越一個品格）。</td>
+                        <td>擴展左手手指開展度，為日後音階與伸展和弦打底。</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="highlight-box">
+                <p><strong>練習要領：</strong>練習時專注於按壓顆粒感與發力放鬆，避免過度僵硬。</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide3" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 4 / 6</span>
+            <label for="slide5" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide-container slide-5">
+        <div>
+            <h2>四、 爬格子指法與手指按壓範例圖</h2>
+            <div class="full-image-container">
+                <p class="image-caption">指法組合與按壓位置細節 (Finger Mindset Diagram)</p>
+                <img src="finger_mideset.jpg" alt="爬格子指法按壓範例圖 finger_mideset.jpg">
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide4" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 5 / 6</span>
+            <label for="slide6" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide-container slide-6">
+        <div>
+            <h2>五、 課堂實作菜單與課後練習</h2>
+            <ul>
+                <li><strong>課堂實作步驟：</strong>
+                    <p>1. 開啟節拍器 BPM 60，進行 16 分音符（每拍 4 音）交錯撥弦。</p>
+                    <p>2. 依序測試「依序爬格 ➔ 蜘蛛走法 ➔ 1-3-2-4 交錯 ➔ 跨格平移」。</p>
+                    <p>3. 觀察手指抬起高度，儘量控制在<b>距離指板 1 公分以內</b>，減少多餘動作。</p>
+                </li>
+            </ul>
+            <div class="highlight-box" style="margin-top: 20px;">
+                <p><strong>本週課後每日訓練菜單（15分鐘）：</strong></p>
+                <p>1. <b>蜘蛛走法與依序爬格：</b>BPM 60~80 暖身 5 分鐘。</p>
+                <p>2. <b>1-3-2-4 / 無名指強化組合：</b>5 分鐘（注意音色顆粒均勻）。</p>
+                <p>3. <b>單弦平移與跨格擴張：</b>5 分鐘（注意手腕放鬆，不可過度僵硬）。</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide5" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 6 / 6</span>
+            <span class="nav-btn disabled">下一頁</span>
+        </div>
+    </div>
+
+</body>
+</html>
