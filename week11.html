@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第十一週授課內容：Triad 三和弦於吉他的應用 (Triads on Guitar)</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --bg-color: #f4efe6;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --border-color: #cbd5e0;
+            --fretboard-bg: #e6d7c3;
+            --fret-color: #5c4033;
+            --root-color: #e63946;
+            --note-color: #1d3557;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1080px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+        }
+
+        .subtitle {
+            color: #4a5568;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        /* 控制選單區塊 */
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            background: #edf2f7;
+            padding: 18px;
+            border-radius: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 0.95em;
+        }
+
+        select {
+            padding: 8px 14px;
+            font-size: 15px;
+            border-radius: 6px;
+            border: 2px solid var(--border-color);
+            background-color: white;
+            color: var(--text-color);
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--accent-color);
+        }
+
+        /* 主展示卡片 */
+        .triad-card {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 25px;
+        }
+
+        .triad-header {
+            background-color: #f7fafc;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .triad-title {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.6em;
+            font-weight: 700;
+        }
+
+        .triad-badge {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        /* 吉他指板容器 (Week 9/10 風格) */
+        .fretboard-container {
+            overflow-x: auto;
+            padding: 20px;
+            background-color: #222;
+        }
+
+        .fretboard {
+            display: grid;
+            grid-template-rows: repeat(6, 30px);
+            background: var(--fretboard-bg);
+            border: 2px solid var(--fret-color);
+            position: relative;
+            min-width: 850px;
+        }
+
+        .string {
+            display: grid;
+            grid-template-columns: 45px repeat(15, 1fr);
+            border-bottom: 1px solid var(--fret-color);
+            align-items: center;
+        }
+
+        .string:last-child {
+            border-bottom: none;
+        }
+
+        .fret {
+            border-right: 2px solid var(--fret-color);
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .fret.open-string {
+            border-right: 4px solid var(--fret-color);
+            background-color: #d8c3a5;
+        }
+
+        .note {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--note-color);
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+
+        .note.root {
+            background-color: var(--root-color);
+        }
+
+        .fret-markers {
+            display: grid;
+            grid-template-columns: 45px repeat(15, 1fr);
+            margin-top: 5px;
+            text-align: center;
+            font-weight: bold;
+            color: #ccc;
+            min-width: 850px;
+        }
+
+        /* 樂理參數資訊網格 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            padding: 20px;
+            background: #fafafa;
+        }
+
+        .info-box {
+            background: white;
+            padding: 14px 18px;
+            border-radius: 8px;
+            border-left: 5px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .info-box.formula { border-left-color: #d69e2e; }
+        .info-box.inversion { border-left-color: #38a169; }
+
+        .info-label {
+            font-size: 0.82em;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        /* 教學重點區塊 */
+        .lesson-section {
+            margin-top: 30px;
+            line-height: 1.6;
+        }
+
+        .lesson-section h3 {
+            color: var(--primary-color);
+            border-left: 4px solid var(--accent-color);
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
+
+        .lesson-section ul {
+            padding-left: 20px;
+        }
+
+        .lesson-section li {
+            margin-bottom: 10px;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #718096;
+            font-size: 0.9em;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>第 11 週授課內容</h1>
+        <div class="subtitle">Triad 三和弦於吉他的應用與橫向位置移動 (Triads on Guitar)</div>
+    </header>
+
+    <!-- 動態控制選單 -->
+    <div class="controls">
+        <div class="control-group">
+            <label for="root-select">根音 (Root):</label>
+            <select id="root-select" onchange="updateTriad()">
+                <option value="C" selected>C</option>
+                <option value="C#">C# / Db</option>
+                <option value="D">D</option>
+                <option value="D#">D# / Eb</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="F#">F# / Gb</option>
+                <option value="G">G</option>
+                <option value="G#">G# / Ab</option>
+                <option value="A">A</option>
+                <option value="A#">A# / Bb</option>
+                <option value="B">B</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="type-select">三和弦種類 (Triad Type):</label>
+            <select id="type-select" onchange="updateTriad()">
+                <option value="major" selected>Major Triad (大三和弦)</option>
+                <option value="minor">Minor Triad (小三和弦)</option>
+                <option value="diminished">Diminished Triad (減三和弦)</option>
+                <option value="augmented">Augmented Triad (增三和弦)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="stringset-select">弦組 (String Sets):</label>
+            <select id="stringset-select" onchange="updateTriad()">
+                <option value="set1" selected>String Set 1 (第 1, 2, 3 弦)</option>
+                <option value="set2">String Set 2 (第 2, 3, 4 弦)</option>
+                <option value="set3">String Set 3 (第 3, 4, 5 弦)</option>
+                <option value="set4">String Set 4 (第 4, 5, 6 弦)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 主展示卡片 -->
+    <div class="triad-card">
+        <div class="triad-header">
+            <h2 class="triad-title" id="display-title">C Major Triad</h2>
+            <span class="triad-badge" id="display-badge">String Set 1 (第 1,2,3 弦)</span>
+        </div>
+
+        <!-- week 9/10 風格之動態吉他指板 -->
+        <div class="fretboard-container">
+            <div class="fretboard" id="fretboard"></div>
+            <div class="fret-markers">
+                <div>0</div><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
+                <div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div>
+                <div>12</div><div>13</div><div>14</div><div>15</div>
+            </div>
+        </div>
+
+        <!-- 樂理資訊 -->
+        <div class="info-grid">
+            <div class="info-box">
+                <div class="info-label">和弦音 (Notes)</div>
+                <div class="info-value" id="display-notes">C - E - G</div>
+            </div>
+            <div class="info-box formula">
+                <div class="info-label">音程公式 (Formula)</div>
+                <div class="info-value" id="display-formula">1 - 3 - 5</div>
+            </div>
+            <div class="info-box inversion">
+                <div class="info-label">轉位順序 (Inversions Across Fretboard)</div>
+                <div class="info-value" id="display-inversions">Root Position → 1st Inv. → 2nd Inv.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 課程重點與實作指南 -->
+    <div class="lesson-section">
+        <h3>第 11 週課程重點與實作應用</h3>
+        <ul>
+            <li><strong>三和弦 (Triad) 的基本結構：</strong> 三和弦由根音 (R)、三度音 (3rd) 與五度音 (5th) 組成。透過改變三度與五度音程，可構建 Major (1-3-5)、Minor (1-b3-5)、Diminished (1-b3-b5) 與 Augmented (1-3-#5) 四種基本三和弦。</li>
+            <li><strong>三音組 (String Sets) 橫向平移：</strong> 將吉他 6 根弦拆分為 4 組三音組：
+                <ul>
+                    <li><strong>Set 1:</strong> 1-2-3 弦（高音聲部，最適合旋律彈奏與伴奏 Fill-in）</li>
+                    <li><strong>Set 2:</strong> 2-3-4 弦</li>
+                    <li><strong>Set 3:</strong> 3-4-5 弦</li>
+                    <li><strong>Set 4:</strong> 4-5-6 弦（低音聲部，構造與 Set 3 完全一致）</li>
+                </ul>
+            </li>
+            <li><strong>三種轉位指型 (Inversions)：</strong> 在同一組 String Set 上，沿著琴頸橫向移動，會依序出現 **本位 (Root Position)**、**第一轉位 (1st Inversion)** 與 **第二轉位 (2nd Inversion)**，實現全指板無縫銜接的橫向巡航。</li>
+        </ul>
+    </div>
+
+    <footer>
+        <p>吉他教案系統 - 第11週：Triad 三和弦於吉他的應用與指板動態繪製</p>
+    </footer>
+</div>
+
+<script>
+    // 12 平均律半音階
+    const chromaticScale = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    
+    // 吉他標準調音 (弦 6 到 弦 1: E2, A2, D3, G3, B3, E4)
+    // index 0 代表 6 弦, index 5 代表 1 弦
+    const openStringsNotes = ["E", "A", "D", "G", "B", "E"];
+
+    // 4 種 Triad 音程定義 (以半音數表示 relative to Root)
+    const triadDefs = {
+        "major": {
+            name: "Major Triad",
+            formula: "1 - 3 - 5",
+            intervals: [0, 4, 7],
+            degreeLabels: ["R", "3", "5"]
+        },
+        "minor": {
+            name: "Minor Triad",
+            formula: "1 - b3 - 5",
+            intervals: [0, 3, 7],
+            degreeLabels: ["R", "b3", "5"]
+        },
+        "diminished": {
+            name: "Diminished Triad",
+            formula: "1 - b3 - b5",
+            intervals: [0, 3, 6],
+            degreeLabels: ["R", "b3", "b5"]
+        },
+        "augmented": {
+            name: "Augmented Triad",
+            formula: "1 - 3 - #5",
+            intervals: [0, 4, 8],
+            degreeLabels: ["R", "3", "#5"]
+        }
+    };
+
+    // 4 個 String Set 包含的弦數 index (0-indexed: 0是6弦, 5是1弦)
+    const stringSetMap = {
+        "set1": { name: "String Set 1 (第 1, 2, 3 弦)", strings: [5, 4, 3] }, // 1E, 2B, 3G
+        "set2": { name: "String Set 2 (第 2, 3, 4 弦)", strings: [4, 3, 2] }, // 2B, 3G, 4D
+        "set3": { name: "String Set 3 (第 3, 4, 5 弦)", strings: [3, 2, 1] }, // 3G, 4D, 5A
+        "set4": { name: "String Set 4 (第 4, 5, 6 弦)", strings: [2, 1, 0] }  // 4D, 5A, 6E
+    };
+
+    // 音名轉為半音號
+    function getNotePitch(noteName) {
+        let cleanNote = noteName.split('/')[0].trim();
+        return chromaticScale.indexOf(cleanNote);
+    }
+
+    // 計算特定琴弦與琴格的半音 Pitch (0-11)
+    function getFretPitch(stringIdx, fret) {
+        let openPitch = getNotePitch(openStringsNotes[stringIdx]);
+        return (openPitch + fret) % 12;
+    }
+
+    // 判斷並渲染 Triad 指板
+    function updateTriad() {
+        const rootNote = document.getElementById("root-select").value;
+        const triadType = document.getElementById("type-select").value;
+        const stringSetKey = document.getElementById("stringset-select").value;
+
+        const triadInfo = triadDefs[triadType];
+        const stringSetInfo = stringSetMap[stringSetKey];
+
+        const rootPitch = getNotePitch(rootNote);
+
+        // 計算當前和弦音音名
+        const chordNotes = triadInfo.intervals.map(i => chromaticScale[(rootPitch + i) % 12]);
+
+        // 更新 UI 資訊
+        document.getElementById("display-title").innerText = `${rootNote} ${triadInfo.name}`;
+        document.getElementById("display-badge").innerText = stringSetInfo.name;
+        document.getElementById("display-notes").innerText = chordNotes.join(" - ");
+        document.getElementById("display-formula").innerText = triadInfo.formula;
+
+        // 建立音高與級數 (R, 3, 5) 對應
+        const pitchToDegree = {};
+        triadInfo.intervals.forEach((interval, idx) => {
+            let pitch = (rootPitch + interval) % 12;
+            pitchToDegree[pitch] = triadInfo.degreeLabels[idx];
+        });
+
+        // 動態生成指板 (從 6 弦到 1 弦)
+        const board = document.getElementById("fretboard");
+        board.innerHTML = "";
+
+        // openStringsNotes 陣列：index 0 是 6 弦, 5 是 1 弦
+        // 渲染時從 1 弦 (index 5) 到 6 弦 (index 0) 呈現於視覺上
+        for (let strIdx = 5; strIdx >= 0; strIdx--) {
+            const stringRow = document.createElement("div");
+            stringRow.className = "string";
+
+            // 檢查當前弦是否屬於選取的 String Set
+            const isTargetString = stringSetInfo.strings.includes(strIdx);
+
+            for (let fret = 0; fret <= 15; fret++) {
+                const fretDiv = document.createElement("div");
+                fretDiv.className = `fret ${fret === 0 ? 'open-string' : ''}`;
+
+                if (isTargetString) {
+                    let currentPitch = getFretPitch(strIdx, fret);
+
+                    // 若為當前 Triad 的和弦音之一，亮起按點
+                    if (pitchToDegree.hasOwnProperty(currentPitch)) {
+                        const degreeLabel = pitchToDegree[currentPitch];
+                        const noteCircle = document.createElement("div");
+                        const isRoot = (degreeLabel === "R");
+
+                        noteCircle.className = `note ${isRoot ? 'root' : ''}`;
+                        noteCircle.innerText = degreeLabel;
+                        fretDiv.appendChild(noteCircle);
+                    }
+                }
+
+                stringRow.appendChild(fretDiv);
+            }
+            board.appendChild(stringRow);
+        }
+    }
+
+    // 頁面初始化
+    updateTriad();
+</script>
+
+</body>
+</html>
