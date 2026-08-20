@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>第三週：名詞定義與音階（完整和弦架構版）</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* 隱藏原生 Radio 開關 */
+        input[type="radio"] {
+            display: none;
+        }
+
+        /* 投影片基礎容器 */
+        .slide-container {
+            width: 100%;
+            max-width: 960px;
+            min-height: 580px;
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 35px 40px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #333;
+        }
+
+        /* 純 CSS 控制 1~9 頁切換 */
+        #slide1:checked ~ .slide-1,
+        #slide2:checked ~ .slide-2,
+        #slide3:checked ~ .slide-3,
+        #slide4:checked ~ .slide-4,
+        #slide5:checked ~ .slide-5,
+        #slide6:checked ~ .slide-6,
+        #slide7:checked ~ .slide-7,
+        #slide8:checked ~ .slide-8,
+        #slide9:checked ~ .slide-9 {
+            display: flex;
+        }
+
+        h1 { color: #4da6ff; font-size: 2.2rem; margin-bottom: 10px; }
+        h2 { color: #ffb84d; font-size: 1.5rem; margin-bottom: 15px; border-bottom: 2px solid #333; padding-bottom: 8px; }
+        p { font-size: 1rem; line-height: 1.6; color: #cccccc; -webkit-user-select: text; user-select: text; }
+        ul { margin-left: 20px; line-height: 1.6; font-size: 0.95rem; -webkit-user-select: text; user-select: text; }
+        li { margin-bottom: 8px; }
+        strong { color: #ffffff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; -webkit-user-select: text; user-select: text; }
+        th, td { border: 1px solid #333; padding: 8px 12px; text-align: left; }
+        th { background-color: #2a2a2a; color: #4da6ff; }
+        td { background-color: #181818; }
+        .highlight-box { background-color: #2a2a2a; border-left: 4px solid #4da6ff; padding: 12px 15px; border-radius: 4px; margin-top: 12px; font-size: 0.95rem; -webkit-user-select: text; user-select: text; }
+        .note-highlight { color: #ff6b6b; font-weight: bold; }
+        .flow-chart { display: flex; justify-content: space-between; align-items: center; background: #252525; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: center; font-weight: bold; font-size: 0.9rem; }
+        .flow-step { background: #333; padding: 8px 12px; border-radius: 6px; color: #4da6ff; }
+        
+        .full-image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #252525;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-top: 10px;
+        }
+        .full-image-container img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 6px;
+            object-fit: contain;
+        }
+
+        /* 翻頁控制按鈕與觸控優化 */
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            background-color: #4da6ff;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-btn.disabled {
+            background-color: #444;
+            color: #888;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .page-indicator {
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1~9 頁的 Radio 控制項 -->
+    <input type="radio" name="slides" id="slide1" checked>
+    <input type="radio" name="slides" id="slide2">
+    <input type="radio" name="slides" id="slide3">
+    <input type="radio" name="slides" id="slide4">
+    <input type="radio" name="slides" id="slide5">
+    <input type="radio" name="slides" id="slide6">
+    <input type="radio" name="slides" id="slide7">
+    <input type="radio" name="slides" id="slide8">
+    <input type="radio" name="slides" id="slide9">
+
+    <!-- Slide 1 -->
+    <div class="slide-container slide-1">
+        <div>
+            <h1>第三週：名詞定義與音階</h1>
+            <p style="color: #888; margin-bottom: 25px;">建立指板地圖與音樂語言的大腦邏輯</p>
+            <div class="highlight-box">
+                <p><strong>教學核心：</strong>音級 (Degree)、音程 (Interval)、基本和弦架構（三和弦與七和弦）、順階和弦 (Diatonic Chords)</p>
+                <p><strong>實作重點：</strong>C-D-E-F-G-A-B-C 的全/半音排列、和弦結構與順階和弦推算</p>
+            </div>
+        </div>
+        <div class="controls">
+            <span class="nav-btn disabled">上一頁</span>
+            <span class="page-indicator">Slide 1 / 9</span>
+            <label for="slide2" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide-container slide-2">
+        <div>
+            <h2>1. 音級（Scale Degrees）詳細說明</h2>
+            <p><strong>定義：</strong>音符在調性音階中的位置與角色名稱（以 C 大調為例）：</p>
+            <table>
+                <thead>
+                    <tr><th>音級</th><th>中文名稱</th><th>英文名稱</th><th>C調範例</th><th>角色與功能說明</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1級 (1st)</td><td>主音</td><td>Tonic</td><td>C</td><td>調性中心、絕對穩定與歸屬感。</td></tr>
+                    <tr><td>2級 (2nd)</td><td>上主音</td><td>Supertonic</td><td>D</td><td>主音上方的音，具輕微不穩定感。</td></tr>
+                    <tr><td>3級 (3rd)</td><td>中音</td><td>Mediant</td><td>E</td><td>位於主音與屬音中間，決定大/小調色彩。</td></tr>
+                    <tr><td>4級 (4th)</td><td>下屬音</td><td>Subdominant</td><td>F</td><td>主音下方五度的對應音，傾向引導至屬音。</td></tr>
+                    <tr><td>5級 (5th)</td><td>屬音</td><td>Dominant</td><td>G</td><td>重要性僅次於主音，具有極強回歸主音的動能。</td></tr>
+                    <tr><td>6級 (6th)</td><td>下中音</td><td>Submediant</td><td>A</td><td>位於主音與下屬音中間（關係小調根音）。</td></tr>
+                    <tr><td>7級 (7th)</td><td>導音</td><td>Leading Tone</td><td>B</td><td>距離主音僅半音，有極強烈的「向上解決」至主音傾向。</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="controls">
+            <label for="slide1" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 2 / 9</span>
+            <label for="slide3" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide-container slide-3">
+        <div>
+            <h2>2. 音程（Intervals）詳細說明</h2>
+            <p><strong>定義：</strong>兩音之間的距離（以「半音數 / 吉他格數」測量，以 C 為基準）：</p>
+            <table>
+                <thead>
+                    <tr><th>音程名稱</th><th>英文縮寫</th><th>半音數(吉他格數)</th><th>C調音符範例</th><th>聽感與特色說明</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>完全一度 / 八度</td><td>P1 / P8</td><td>0 / 12 格</td><td>C - C</td><td>完全協和，同音或頻率翻倍。</td></tr>
+                    <tr><td>小二度 / 大二度</td><td>m2 / M2</td><td>1 / 2 格</td><td>C-D♭ / C-D</td><td>m2 極度摩擦緊張；M2 輕微不協和（全音）。</td></tr>
+                    <tr><td>小三度 / 大三度</td><td>m3 / M3</td><td>3 / 4 格</td><td>C-E♭ / C-E</td><td>和弦靈魂！m3 聽感憂鬱，M3 聽感明亮。</td></tr>
+                    <tr><td>完全四度 / 完全五度</td><td>P4 / P5</td><td>5 / 7 格</td><td>C-F / C-G</td><td>強烈協和，P5 為 Power Chord（五度和弦）基礎。</td></tr>
+                    <tr><td>增四 / 減五度</td><td>TT (Tritone)</td><td>6 格</td><td>C-F♯ (G♭)</td><td>三全音！極度緊張不穩定，屬七和弦核心。</td></tr>
+                    <tr><td>小六度 / 大六度</td><td>m6 / M6</td><td>8 / 9 格</td><td>C-A♭ / C-A</td><td>具抒情、浪漫與延伸感。</td></tr>
+                    <tr><td>小七度 / 大七度</td><td>m7 / M7</td><td>10 / 11 格</td><td>C-B♭ / C-B</td><td>m7 常用於屬七/爵士樂；M7 具夢幻張力。</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="controls">
+            <label for="slide2" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 3 / 9</span>
+            <label for="slide4" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide-container slide-4">
+        <div>
+            <h2>3. 音階與 4. 和弦定義</h2>
+            <ul>
+                <li><strong>3. 音階（Scales）：</strong><br>將音符按特定音程排列的集合。例如<b>大調音階</b>為「全-全-半-全-全-全-半」（即音程：M2-M2-m2-M2-M2-M2-m2）。</li>
+                <li style="margin-top: 15px;"><strong>4. 和弦定義（Chord Definitions）：</strong><br>三個或以上的音，按特定音程疊加（通常為<b>三度疊置</b>）：
+                    <ul style="margin-top: 5px; color: #aaa;">
+                        <li><b>大三和弦 (Major Triad)：</b> 根音 + 大三度 (M3) + 完全五度 (P5) [例如 C - E - G]</li>
+                        <li><b>小三和弦 (Minor Triad)：</b> 根音 + 小三度 (m3) + 完全五度 (P5) [例如 C - E♭ - G]</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="flow-chart">
+                <div class="flow-step">音程<br><small>(距離尺規)</small></div>➔
+                <div class="flow-step">音階<br><small>(排列集合)</small></div>➔
+                <div class="flow-step">音級<br><small>(角色身份)</small></div>➔
+                <div class="flow-step">和弦<br><small>(三度疊加)</small></div>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide3" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 4 / 9</span>
+            <label for="slide5" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide-container slide-5">
+        <div>
+            <h2>5. 基本和弦架構 - 三和弦 (Triad)</h2>
+            <p>由三個相距<b>三度</b>的音所組成（主音 + 三音 + 五音），可分為四種基本型態：</p>
+            <table>
+                <thead>
+                    <tr><th>類別</th><th>音程組成 (由下而上)</th><th>組成音</th><th>和弦記號</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><b>1) 大三和弦</b></td><td>M3, m3</td><td>1, 3, 5</td><td>無 , maj , M 或 Δ</td></tr>
+                    <tr><td><b>2) 小三和弦</b></td><td>m3, M3</td><td>1, ♭3, 5</td><td>m , min 或 -</td></tr>
+                    <tr><td><b>3) 減三和弦</b></td><td>m3, m3</td><td>1, ♭3, ♭5</td><td>dim 或 o</td></tr>
+                    <tr><td><b>4) 增三和弦</b></td><td>M3, M3</td><td>1, 3, ♯5</td><td>aug 或 +</td></tr>
+                </tbody>
+            </table>
+            <div class="highlight-box">
+                <p><strong>結構與範例說明：</strong></p>
+                <ul>
+                    <li><b>大三和弦 (Major Triad)：</b> Root + M3 + m3 (P5) ➔ <i>例：C (1, 3, 5) / D (2, ♯4, 6)</i></li>
+                    <li><b>小三和弦 (minor Triad)：</b> Root + m3 + M3 (P5) ➔ <i>例：Am (6, 1, 3) / Em (3, 5, 7)</i></li>
+                    <li><b>增三和弦 (Augmented Triad)：</b> Root + M3 + M3 (A5) ➔ <i>例：Caug (1, 3, ♯5) / A+ (6, ♯1, 4)</i> <span class="note-highlight">※ "+" 代表 5 音升半音</span></li>
+                    <li><b>減三和弦 (Diminished Triad)：</b> Root + m3 + m3 (D5) ➔ <i>例：Bdim (7, 2, 4)</i></li>
+                </ul>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide4" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 5 / 9</span>
+            <label for="slide6" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide-container slide-6">
+        <div>
+            <h2>5. 基本和弦架構 - 七和弦 (7th Chord)</h2>
+            <p>以三和弦為基礎，再疊加一個由根音往上的<b>「7度音」</b>，共由四個音組成：</p>
+            <table>
+                <thead>
+                    <tr><th>類別</th><th>音程組成</th><th>組成音</th><th>和弦記號</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><b>1) 大七和弦</b></td><td>M3, m3, M3</td><td>1, 3, 5, 7</td><td>maj7 , M7 或 Δ7</td></tr>
+                    <tr><td><b>2) 小七和弦</b></td><td>m3, M3, m3</td><td>1, ♭3, 5, ♭7</td><td>m7 , min7 或 -7</td></tr>
+                    <tr><td><b>3) 屬七和弦</b></td><td>M3, m3, m3</td><td>1, 3, 5, ♭7</td><td>7</td></tr>
+                    <tr><td><b>4) 半減七和弦</b></td><td>m3, m3, M3</td><td>1, ♭3, ♭5, ♭7</td><td>m7(♭5) , m7-5 或 ϕ</td></tr>
+                    <tr><td><b>5) 減七和弦</b></td><td>m3, m3, m3</td><td>1, ♭3, ♭5, ♭♭7</td><td>dim7 , o7</td></tr>
+                </tbody>
+            </table>
+            <div class="highlight-box">
+                <p><strong>結構範例與推導：</strong></p>
+                <ul>
+                    <li><b>大七和弦 (Major Seven)：</b> [大三和弦 + 大七度] ➔ <i>例：Cmaj7 (1, 3, 5, 7) / Gmaj7 (5, 7, 2, ♯4)</i> <br><span class="note-highlight">※ 口訣：除了 maj7 是大7度外，其餘常見七和弦皆含 ♭7！</span></li>
+                    <li><b>小七和弦 (minor Seven)：</b> [小三和弦 + 小七度] ➔ <i>例：Em7 (3, 5, 7, 2) / Cm7 (1, ♭3, 5, ♭7)</i></li>
+                    <li><b>屬七和弦 (Dominant Seven)：</b> [大三和弦 + 小七度] ➔ <i>例：G7 (5, 7, 2, 4) / C7 (1, 3, 5, ♭7)</i></li>
+                </ul>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide5" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 6 / 9</span>
+            <label for="slide7" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="slide-container slide-7">
+        <div>
+            <h2>5. C 大調順階和弦 (Diatonic Chords)</h2>
+            <p><strong>定義：</strong>順著 C 大調自然音階 (1 2 3 4 5 6 7) 依三度疊加所產生的和弦群：</p>
+            <table>
+                <thead>
+                    <tr><th>音級</th><th>級數記號</th><th>三和弦</th><th>七和弦</th><th>和聲功能 (Function)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>I 級</td><td>I / Imaj7</td><td>C</td><td>Cmaj7</td><td><strong>主和弦功能 (Tonic - T)</strong> - 最穩定</td></tr>
+                    <tr><td>II 級</td><td>IIm / IIm7</td><td>Dm</td><td>Dm7</td><td><strong>下屬和弦功能 (Sub-Dominant - SD)</strong></td></tr>
+                    <tr><td>III 級</td><td>IIIm / IIIm7</td><td>Em</td><td>Em7</td><td><strong>主和弦代理 (Tonic - T)</strong></td></tr>
+                    <tr><td>IV 級</td><td>IV / IVmaj7</td><td>F</td><td>Fmaj7</td><td><strong>下屬和弦功能 (Sub-Dominant - SD)</strong></td></tr>
+                    <tr><td>V 級</td><td>V / V7</td><td>G</td><td>G7</td><td><strong>屬和弦功能 (Dominant - D)</strong> - 傾向解決至 I</td></tr>
+                    <tr><td>VI 級</td><td>VIm / VIm7</td><td>Am</td><td>Am7</td><td><strong>主和弦代理 (Tonic - T)</strong></td></tr>
+                    <tr><td>VII 級</td><td>VII° / VIIø</td><td>Bdim</td><td>Bm7-5</td><td><strong>屬和弦代理 (Dominant - D)</strong></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="controls">
+            <label for="slide6" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 7 / 9</span>
+            <label for="slide8" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide-container slide-8">
+        <div>
+            <h2>C 調自然大調順階和弦吉他按法對照圖</h2>
+            <div class="full-image-container">
+                #<img src="https://lh3.googleusercontent.com/d/1fMcwth2s5IyywPXYLOsFGAk3_i6VkaQ6" alt="C調自然大調順階三和弦與七和弦吉他按法圖解">
+				<img src="Screenshot_20260807_160701_Facebook.jpg" alt="C調自然大調順階三和弦與七和弦吉他按法圖解">
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide7" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 8 / 9</span>
+            <label for="slide9" class="nav-btn">下一頁</label>
+        </div>
+    </div>
+
+    <!-- Slide 9 -->
+    <div class="slide-container slide-9">
+        <div>
+            <h2>實作與推算：C 大調指板</h2>
+            <ul>
+                <li><strong>C 自然大調音階：</strong> C — D — E — F — G — A — B — C</li>
+                <li><strong>音級對照：</strong> 1級(主) — 2級(上主) — 3級(中) — 4級(下屬) — 5級(屬) — 6級(下中) — 7級(導)</li>
+                <li><strong>關鍵記憶：</strong> <strong>E - F</strong> (3-4級) 與 <strong>B - C</strong> (7-1級) 為<b>小二度 (半音/相鄰1格)</b>，其餘皆為<b>大二度 (全音/相隔2格)</b>。</li>
+            </ul>
+            <div class="highlight-box">
+                <p><strong>課後實作練習：</strong></p>
+                <p>1. 在吉他第 6 弦與第 5 弦上，依序找出 C(1) - D(2) - E(3) - F(4) - G(5) - A(6) - B(7) 的位置。</p>
+                <p>2. 體會 7 級音 (B) 彈完後，手指想彈回 1 級音 (C) 的「導音解決感」。</p>
+                <p>3. 壓出 1級(C) + 3級(E) + 5級(G)，驗證大三度的明亮聽感。</p>
+            </div>
+        </div>
+        <div class="controls">
+            <label for="slide8" class="nav-btn">上一頁</label>
+            <span class="page-indicator">Slide 9 / 9</span>
+            <span class="nav-btn disabled">下一頁</span>
+        </div>
+    </div>
+
+</body>
+</html>
