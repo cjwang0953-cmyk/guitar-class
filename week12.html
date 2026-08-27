@@ -151,18 +151,6 @@
             margin: 10px 0;
         }
 
-        .fret-number-label {
-            font-size: 14px;
-            font-weight: bold;
-            color: #2c5282;
-            background: #ebf8ff;
-            border: 1px solid #bee3f8;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-top: 24px;
-            white-space: nowrap;
-        }
-
         .chord-diagram-container {
             position: relative;
             width: 180px;
@@ -239,6 +227,21 @@
             height: 26px;
         }
 
+        .fret-number-label {
+            position: absolute;
+            left: -12px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c5282;
+            background: #ebf8ff;
+            border: 1px solid #bee3f8;
+            padding: 2px 5px;
+            border-radius: 4px;
+            transform: translate(-100%, -50%);
+            white-space: nowrap;
+            z-index: 6;
+        }
+
         .degrees-row {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -283,8 +286,8 @@
                 <option value="maj7">Major 7 (大七和弦)</option>
                 <option value="dom7">Dominant 7 (屬七和弦)</option>
                 <option value="m7">Minor 7 (小七和弦)</option>
-                <option value="half_dim7">Half-Diminished 7 (半減七和弦)</option>
-                <option value="dim7" selected>Diminished 7 (減七和弦)</option>
+                <option value="half_dim7" selected>Half-Diminished 7 (半減七和弦)</option>
+                <option value="dim7">Diminished 7 (減七和弦)</option>
             </select>
         </div>
     </div>
@@ -438,8 +441,8 @@
                 muted: ["", "X", "", "", "", "X"],
                 dots: [
                     { string: 6, fretRel: 2, finger: "1", degree: "R", isRoot: true },
-                    { string: 4, fretRel: 3, finger: "3", degree: "b7" },
-                    { string: 3, fretRel: 3, finger: "4", degree: "b3" },
+                    { string: 4, fretRel: 2, finger: "3", degree: "b7" },
+                    { string: 3, fretRel: 2, finger: "4", degree: "b3" },
                     { string: 2, fretRel: 1, finger: "2", degree: "b5" }
                 ],
                 bottomDegrees: ["R", "", "b7", "b3", "b5", ""]
@@ -449,10 +452,10 @@
                 rootString: 5,
                 muted: ["X", "", "", "", "", "X"],
                 dots: [
-                    { string: 5, fretRel: 1, finger: "1", degree: "R", isRoot: true },
-                    { string: 4, fretRel: 2, finger: "3", degree: "b5" },
-                    { string: 3, fretRel: 1, finger: "2", degree: "b7" },
-                    { string: 2, fretRel: 2, finger: "4", degree: "b3" }
+                    { string: 5, fretRel: 2, finger: "1", degree: "R", isRoot: true },
+                    { string: 4, fretRel: 3, finger: "3", degree: "b5" },
+                    { string: 3, fretRel: 2, finger: "2", degree: "b7" },
+                    { string: 2, fretRel: 3, finger: "4", degree: "b3" }
                 ],
                 bottomDegrees: ["", "R", "b5", "b7", "b3", ""]
             },
@@ -461,10 +464,10 @@
                 rootString: 4,
                 muted: ["X", "X", "", "", "", ""],
                 dots: [
-                    { string: 4, fretRel: 1, finger: "1", degree: "R", isRoot: true },
-                    { string: 3, fretRel: 2, finger: "2", degree: "b5" },
-                    { string: 2, fretRel: 2, finger: "3", degree: "b7" },
-                    { string: 1, fretRel: 2, finger: "4", degree: "b3" }
+                    { string: 4, fretRel: 2, finger: "1", degree: "R", isRoot: true },
+                    { string: 3, fretRel: 3, finger: "2", degree: "b5" },
+                    { string: 2, fretRel: 3, finger: "3", degree: "b7" },
+                    { string: 1, fretRel: 3, finger: "4", degree: "b3" }
                 ],
                 bottomDegrees: ["", "", "R", "b5", "b7", "b3"]
             }
@@ -476,9 +479,9 @@
                 muted: ["", "X", "", "", "", "X"],
                 dots: [
                     { string: 6, fretRel: 2, finger: "1", degree: "R", isRoot: true },
-                    { string: 4, fretRel: 2, finger: "2", degree: "bb7" },
-                    { string: 3, fretRel: 3, finger: "4", degree: "b3" },
-                    { string: 2, fretRel: 1, finger: "1", degree: "b5" }
+                    { string: 4, fretRel: 1, finger: "2", degree: "bb7" },
+                    { string: 3, fretRel: 2, finger: "4", degree: "b3" },
+                    { string: 2, fretRel: 1, finger: "3", degree: "b5" }
                 ],
                 bottomDegrees: ["R", "", "bb7", "b3", "b5", ""]
             },
@@ -487,10 +490,10 @@
                 rootString: 5,
                 muted: ["X", "", "", "", "", "X"],
                 dots: [
-                    { string: 5, fretRel: 1, finger: "1", degree: "R", isRoot: true },
-                    { string: 4, fretRel: 2, finger: "3", degree: "b5" },
-                    { string: 3, fretRel: 0, finger: "1", degree: "bb7" },
-                    { string: 2, fretRel: 2, finger: "4", degree: "b3" }
+                    { string: 5, fretRel: 2, finger: "1", degree: "R", isRoot: true },
+                    { string: 4, fretRel: 3, finger: "3", degree: "b5" },
+                    { string: 3, fretRel: 1, finger: "2", degree: "bb7" },
+                    { string: 2, fretRel: 3, finger: "4", degree: "b3" }
                 ],
                 bottomDegrees: ["", "R", "b5", "bb7", "b3", ""]
             },
@@ -499,10 +502,10 @@
                 rootString: 4,
                 muted: ["X", "X", "", "", "", ""],
                 dots: [
-                    { string: 4, fretRel: 1, finger: "1", degree: "R", isRoot: true },
-                    { string: 3, fretRel: 2, finger: "3", degree: "b5" },
-                    { string: 2, fretRel: 1, finger: "2", degree: "bb7" },
-                    { string: 1, fretRel: 2, finger: "4", degree: "b3" }
+                    { string: 4, fretRel: 2, finger: "1", degree: "R", isRoot: true },
+                    { string: 3, fretRel: 3, finger: "3", degree: "b5" },
+                    { string: 2, fretRel: 2, finger: "2", degree: "bb7" },
+                    { string: 1, fretRel: 3, finger: "4", degree: "b3" }
                 ],
                 bottomDegrees: ["", "", "R", "b5", "bb7", "b3"]
             }
@@ -531,7 +534,7 @@
         };
         const displayTypeLabel = displayTypeMap[type] || type.toUpperCase();
 
-        const shapes = chordShapesData[type] || chordShapesData["dim7"];
+        const shapes = chordShapesData[type] || chordShapesData["half_dim7"];
 
         shapes.forEach(shape => {
             const card = document.createElement("div");
@@ -549,11 +552,6 @@
 
             const wrapper = document.createElement("div");
             wrapper.className = "diagram-wrapper";
-
-            const fretLabel = document.createElement("div");
-            fretLabel.className = "fret-number-label";
-            fretLabel.innerText = `${rootFret} fr.`;
-            wrapper.appendChild(fretLabel);
 
             const container = document.createElement("div");
             container.className = "chord-diagram-container";
@@ -596,6 +594,14 @@
 
                 dotDiv.innerText = (currentViewMode === 'finger') ? dot.finger : dot.degree;
                 dotsLayer.appendChild(dotDiv);
+
+                if (dot.isRoot) {
+                    const fretLabel = document.createElement("div");
+                    fretLabel.className = "fret-number-label";
+                    fretLabel.innerText = `${rootFret} fr.`;
+                    fretLabel.style.top = `${topPx}px`;
+                    dotsLayer.appendChild(fretLabel);
+                }
             });
             container.appendChild(dotsLayer);
 
